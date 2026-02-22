@@ -1,2 +1,8 @@
-/mvnw text eol=lf
+# Default behavior
+* text=auto
+
+# Unix scripts
+mvnw text eol=lf
+
+# Windows scripts
 *.cmd text eol=crlf
