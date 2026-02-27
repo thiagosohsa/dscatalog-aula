@@ -27,12 +27,20 @@ public class ProductServiceTests {
     void setUp() {
         existingId = 1L;
         nonExistingId = 9999L;
+        dependentId = 3L;
 
         Mockito.doNothing().when(repository).deleteById(existingId);
 
         Mockito.when(repository.existsById(existingId)).thenReturn(true);
         Mockito.when(repository.existsById(nonExistingId)).thenReturn(false);
         Mockito.when(repository.existsById(dependentId)).thenReturn(true);
+    }
+
+    @Test
+    public void deleteShouldDoNothingWhenIdExists() {
+        Assertions.assertDoesNotThrow(() -> {
+            service.delete(existingId);
+        });
     }
 
     @Test
