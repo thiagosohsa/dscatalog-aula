@@ -1,17 +1,22 @@
 package com.devsuperior.dscatalog.services;
 
+import com.devsuperior.dscatalog.entities.Product;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
+import com.devsuperior.dscatalog.tests.Factory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
 public class ProductServiceTests {
@@ -24,14 +29,23 @@ public class ProductServiceTests {
     private long existingId;
     private long nonExistingId;
     private long dependentId;
+    private PageImpl<Product> page;
+    private Product product;
 
     @BeforeEach
     void setUp() {
         existingId = 1L;
         nonExistingId = 9999L;
         dependentId = 3L;
+        product = Factory.createProduct();
+        page = new PageImpl<>(List.of(product));
 
-        Mockito.doNothing().when(repository).deleteById(existingId);
+        Mockito.when(repository.findAll((Pageable) ArgumentMatchers.any())).thenReturn(page);
+        Mockito.when(repository.save(ArgumentMatchers.any())).thenReturn(product);
+
+        Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(product));
+        Mockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
+
         Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
 
         Mockito.when(repository.existsById(existingId)).thenReturn(true);
