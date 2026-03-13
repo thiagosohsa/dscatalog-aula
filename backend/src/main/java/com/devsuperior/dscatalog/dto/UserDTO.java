@@ -15,7 +15,6 @@ public class UserDTO {
     @Email(message = "Favor inserir um email válido")
     @NotBlank(message = "Campo obrigatório")
     private String email;
-    private String password;
 
     private Set<RoleDTO> roles = new HashSet<>();
 
@@ -67,14 +66,6 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Set<RoleDTO> getRoles() {
